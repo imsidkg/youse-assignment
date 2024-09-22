@@ -41,7 +41,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<Task[]>(`${API_URL}/api/tasks`, getAuthHeaders());
+      const response = await axios.get<Task[]>(`${API_URL}/tasks`, getAuthHeaders());
       setTasks(response.data);
       setError(null);
     } catch (err) {
@@ -54,7 +54,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createTask = async (newTask: Omit<Task, '_id' | 'userId'>) => {
     try {
-      const response = await axios.post<Task>(`${API_URL}/api/tasks`, newTask, getAuthHeaders());
+      const response = await axios.post<Task>(`${API_URL}/tasks`, newTask, getAuthHeaders());
       setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (err) {
       setError('Failed to create task');
@@ -65,7 +65,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateTask = async (id: string, updatedTask: Partial<Omit<Task, '_id' | 'userId'>>) => {
     try {
-      const response = await axios.put<Task>(`${API_URL}/api/tasks/${id}`, updatedTask, getAuthHeaders());
+      const response = await axios.put<Task>(`${API_URL}/tasks/${id}`, updatedTask, getAuthHeaders());
       setTasks(prevTasks => prevTasks.map(task => task._id === id ? response.data : task));
     } catch (err) {
       setError('Failed to update task');
@@ -76,7 +76,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deleteTask = async (id: string) => {
     try {
-      await axios.delete(`${API_URL}/api/tasks/${id}`, getAuthHeaders());
+      await axios.delete(`${API_URL}/tasks/${id}`, getAuthHeaders());
       setTasks(prevTasks => prevTasks.filter(task => task._id !== id));
     } catch (err) {
       setError('Failed to delete task');

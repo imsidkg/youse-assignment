@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // Your Express backend
+const API_URL = 'https://youse-backend.netlify.app/.netlify/functions/api'; // Your Express backend
 
 // API request to fetch tasks
 export const getTasks = async () => {

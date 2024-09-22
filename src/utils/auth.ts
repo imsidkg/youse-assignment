@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://youse-backend.netlify.app/.netlify/functions/api';
 
 export const loginUser = async (credentials: { email: string; password: string }) => {
   const response = await fetch(`${API_URL}/auth/login`, {
