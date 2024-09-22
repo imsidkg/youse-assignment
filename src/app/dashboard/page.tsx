@@ -367,31 +367,76 @@
 //   );
 // }
 
+// 'use client';
+// import React from 'react';
+// import { useTaskContext } from '../context/TaskContext';
+
+// const DashboardPage: React.FC = () => {
+//   const { tasks, loading, error } = useTaskContext();
+
+//   console.log('Tasks in DashboardPage:', tasks); // Add this line for debugging
+
+//   if (loading) return <div>Loading...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   // Check if tasks is an array and has items
+//   if (!Array.isArray(tasks) || tasks.length === 0) {
+//     return <div>No tasks available</div>;
+//   }
+
+//   return (
+//     <div>
+//       <h1>Dashboard</h1>
+//       {tasks.map(task => (
+//         <div key={task._id}>{task.title}</div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default DashboardPage;
+
+
+
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTaskContext } from '../context/TaskContext';
+import TaskCard from '@/components/TaskCard';
+import TaskForm from '@/components/TaskForm';
 
-const DashboardPage: React.FC = () => {
-  const { tasks, loading, error } = useTaskContext();
+export default function DashboardPage() {
+  const { tasks, loading, error, createTask, updateTask, deleteTask } = useTaskContext();
+  const [showForm, setShowForm] = useState(false);
 
-  console.log('Tasks in DashboardPage:', tasks); // Add this line for debugging
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading tasks...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  // Check if tasks is an array and has items
-  if (!Array.isArray(tasks) || tasks.length === 0) {
-    return <div>No tasks available</div>;
-  }
-
   return (
-    <div>
-      <h1>Dashboard</h1>
-      {tasks.map(task => (
-        <div key={task._id}>{task.title}</div>
-      ))}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+      <button 
+        onClick={() => setShowForm(true)}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+      >
+        Add New Task
+      </button>
+      {showForm && (
+        <TaskForm 
+          onClose={() => setShowForm(false)}
+        />
+      )}
+      {tasks.length === 0 ? (
+        <p>No tasks available. Create a new task to get started!</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {tasks.map(task => (
+            <TaskCard
+              key={task._id} 
+              task={task} 
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
-};
-
-export default DashboardPage;
+}
