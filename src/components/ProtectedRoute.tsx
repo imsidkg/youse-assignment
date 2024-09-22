@@ -10,16 +10,17 @@ const ProtectedRoute = <P extends object>(WrappedComponent: React.ComponentType<
 
     useEffect(() => {
       if (!isLoading && !user) {
+        console.log('No user detected, redirecting to login...');
         router.push('/login');
       }
     }, [user, isLoading, router]);
 
     if (isLoading) {
-      return <div>Loading...</div>; // Or your preferred loading indicator
+      return <div>Loading...</div>;
     }
 
     if (!user) {
-      return null; // This will briefly show while redirecting
+      return null;
     }
 
     return <WrappedComponent {...props} />;

@@ -1,11 +1,17 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { Task } from '../types/types';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface TaskResponse {
-  tasks: Task[];
+interface Task {
+  _id: string;
+  title: string;
+  description?: string;
+  status: 'To Do' | 'In Progress' | 'Completed';
+  priority: 'Low' | 'Medium' | 'High';
+  dueDate?: string;
+  userId: string;
 }
 
 interface TaskContextType {
@@ -13,12 +19,19 @@ interface TaskContextType {
   loading: boolean;
   error: string | null;
   fetchTasks: () => Promise<void>;
-  createTask: (task: Omit<Task, '_id'>) => Promise<void>;
-  updateTask: (id: string, task: Partial<Task>) => Promise<void>;
+  createTask: (task: Omit<Task, '_id' | 'userId'>) => Promise<void>;
+  updateTask: (id: string, task: Partial<Omit<Task, '_id' | 'userId'>>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+};
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -28,40 +41,47 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<TaskResponse>('/api/tasks'); // Specify TaskResponse type
-      setTasks(response.data.tasks); // Assuming the response has a 'tasks' field
+      const response = await axios.get<Task[]>(`${API_URL}/api/tasks`, getAuthHeaders());
+      setTasks(response.data);
       setError(null);
     } catch (err) {
       setError('Failed to fetch tasks');
+      console.error('Error fetching tasks:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const createTask = async (task: Omit<Task, '_id'>) => {
+  const createTask = async (newTask: Omit<Task, '_id' | 'userId'>) => {
     try {
-      const response = await axios.post<Task>('/api/tasks', task); // Specify Task type
-      setTasks([...tasks, response.data]); // response.data is of type Task
+      const response = await axios.post<Task>(`${API_URL}/api/tasks`, newTask, getAuthHeaders());
+      setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (err) {
       setError('Failed to create task');
+      console.error('Error creating task:', err);
+      throw err;
     }
   };
 
-  const updateTask = async (id: string, updatedTask: Partial<Task>) => {
+  const updateTask = async (id: string, updatedTask: Partial<Omit<Task, '_id' | 'userId'>>) => {
     try {
-      const response = await axios.put<Task>(`/api/tasks/${id}`, updatedTask); // Specify Task type
-      setTasks(tasks.map(task => task._id === id ? response.data : task)); // response.data is of type Task
+      const response = await axios.put<Task>(`${API_URL}/api/tasks/${id}`, updatedTask, getAuthHeaders());
+      setTasks(prevTasks => prevTasks.map(task => task._id === id ? response.data : task));
     } catch (err) {
       setError('Failed to update task');
+      console.error('Error updating task:', err);
+      throw err;
     }
   };
 
   const deleteTask = async (id: string) => {
     try {
-      await axios.delete(`/api/tasks/${id}`);
-      setTasks(tasks.filter(task => task._id !== id));
+      await axios.delete(`${API_URL}/api/tasks/${id}`, getAuthHeaders());
+      setTasks(prevTasks => prevTasks.filter(task => task._id !== id));
     } catch (err) {
       setError('Failed to delete task');
+      console.error('Error deleting task:', err);
+      throw err;
     }
   };
 

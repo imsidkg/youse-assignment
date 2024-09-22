@@ -1,14 +1,21 @@
 'use client'
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { useTaskContext } from '../context/TaskContext';
+
 import TaskCard from '@/components/TaskCard';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useTaskContext } from '../context/TaskContext';
 
 const columns = ['To Do', 'In Progress', 'Completed'];
 
 const KanbanPage: React.FC = () => {
-  const { tasks, updateTask } = useTaskContext();
+  const { tasks, updateTask, loading } = useTaskContext();
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setEnabled(true), 500);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -27,6 +34,10 @@ const KanbanPage: React.FC = () => {
     const newStatus = destination.droppableId as 'To Do' | 'In Progress' | 'Completed';
     updateTask(draggableId, { status: newStatus });
   };
+
+  if (!enabled || loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

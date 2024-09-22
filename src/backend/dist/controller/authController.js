@@ -43,18 +43,21 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.signup = signup;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password } = req.body;
-        const user = yield User_1.default.findOne({ email });
-        if (!user || !(yield bcryptjs_1.default.compare(password, user.password))) {
-            return res.status(401).json({ message: "Invalid credentials" });
+        // Verify user credentials...
+        const user = yield User_1.default.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const token = jsonwebtoken_1.default.sign({
-            user: user._id,
-        }, process.env.JWT_SECRET, { expiresIn: "1d" });
+        // Check password...
+        if (!(yield bcryptjs_1.default.compare(req.body.password, user.password))) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+        const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
     }
     catch (error) {
-        res.status(500).json({ message: "Error logging in", error });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error during login' });
     }
 });
 exports.login = login;

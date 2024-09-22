@@ -17,49 +17,67 @@ const Task_1 = __importDefault(require("../models/Task"));
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const task = new Task_1.default(Object.assign(Object.assign({}, req.body), { userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId }));
+        console.log('Received task data:', req.body);
+        console.log('User ID:', (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
+        console.log('Full request user object:', req.user);
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+        const task = new Task_1.default(Object.assign(Object.assign({}, req.body), { userId: req.user.userId }));
+        console.log('Task before save:', task);
         yield task.save();
+        console.log('Task after save:', task);
         res.status(201).json(task);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error creating task', error });
+        console.error('Error in createTask:', error);
+        res.status(500).json({ message: 'Error creating task', error: error.message });
     }
 });
 exports.createTask = createTask;
 const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const tasks = yield Task_1.default.find({ userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId });
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+        const tasks = yield Task_1.default.find({ userId: req.user.userId });
         res.json(tasks);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error fetching tasks', error });
+        console.error('Error in getTasks:', error);
+        res.status(500).json({ message: 'Error fetching tasks', error: error.message });
     }
 });
 exports.getTasks = getTasks;
 const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const task = yield Task_1.default.findOneAndUpdate({ _id: req.params.id, userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId }, req.body, { new: true });
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+        const task = yield Task_1.default.findOneAndUpdate({ _id: req.params.id, userId: req.user.userId }, req.body, { new: true });
         if (!task)
             return res.status(404).json({ message: 'Task not found' });
         res.json(task);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error updating task', error });
+        console.error('Error in updateTask:', error);
+        res.status(500).json({ message: 'Error updating task', error: error.message });
     }
 });
 exports.updateTask = updateTask;
 const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const task = yield Task_1.default.findOneAndDelete({ _id: req.params.id, userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId });
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+        const task = yield Task_1.default.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
         if (!task)
             return res.status(404).json({ message: 'Task not found' });
         res.json({ message: 'Task deleted successfully' });
     }
     catch (error) {
-        res.status(500).json({ message: 'Error deleting task', error });
+        console.error('Error in deleteTask:', error);
+        res.status(500).json({ message: 'Error deleting task', error: error.message });
     }
 });
 exports.deleteTask = deleteTask;

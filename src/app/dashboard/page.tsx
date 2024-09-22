@@ -13,6 +13,10 @@ const DashboardPage: React.FC = () => {
   const [sortBy, setSortBy] = useState('dueDate');
   const [showForm, setShowForm] = useState(false);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!tasks) return <div>No tasks available</div>;
+
   const filteredTasks = tasks.filter(task => {
     if (filter === 'all') return true;
     return task.status === filter;
@@ -25,41 +29,42 @@ const DashboardPage: React.FC = () => {
     return (a[sortBy as keyof typeof a] as string).localeCompare(b[sortBy as keyof typeof b] as string);
   });
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   return (
     <div>
-    <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
-    <div className="flex justify-between mb-4">
-      <Select onValueChange={(value) => setFilter(value)} defaultValue="all">
-        <SelectTrigger>
-          <SelectValue placeholder="Filter by status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="To Do">To Do</SelectItem>
-          <SelectItem value="In Progress">In Progress</SelectItem>
-          <SelectItem value="Completed">Completed</SelectItem>
-        </SelectContent>
-      </Select>
+      <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+      <div className="flex justify-between mb-4">
+        <Select onValueChange={(value) => setFilter(value)} defaultValue="all">
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="To Do">To Do</SelectItem>
+            <SelectItem value="In Progress">In Progress</SelectItem>
+            <SelectItem value="Completed">Completed</SelectItem>
+          </SelectContent>
+        </Select>
 
-      <Select onValueChange={(value) => setSortBy(value)} defaultValue="dueDate">
-        <SelectTrigger>
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="dueDate">Due Date</SelectItem>
-          <SelectItem value="priority">Priority</SelectItem>
-          <SelectItem value="title">Title</SelectItem>
-        </SelectContent>
-      </Select>
+        <Select onValueChange={(value) => setSortBy(value)} defaultValue="dueDate">
+          <SelectTrigger>
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="dueDate">Due Date</SelectItem>
+            <SelectItem value="priority">Priority</SelectItem>
+            <SelectItem value="title">Title</SelectItem>
+          </SelectContent>
+        </Select>
 
-      <Button onClick={() => setShowForm(true)}>Add Task</Button>
+        <Button onClick={() => setShowForm(true)}>Create New Task</Button>
+      </div>
+      <TaskList tasks={sortedTasks} />
+      {showForm && (
+        <TaskForm 
+          onClose={() => setShowForm(false)}
+        />
+      )}
     </div>
-    <TaskList tasks={sortedTasks} />
-    {showForm && <TaskForm onClose={() => setShowForm(false)} />}
-  </div>
   );
 };
 

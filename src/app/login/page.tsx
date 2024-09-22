@@ -35,8 +35,19 @@ const Login: React.FC = () => {
       }
 
       const data = await response.json();
-      login(data.user);
-      // The useEffect above will handle redirection
+      console.log('Login successful, data:', data);
+      
+      localStorage.setItem('token', data.token);
+      
+      // Create a user object with available information
+      const userData = {
+        id: email, // Use email as a temporary id
+        username: email.split('@')[0], // Use part of email as username
+        email: email
+      };
+      
+      login(userData);
+      console.log('Login function called, user should be set');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'An error occurred');
@@ -47,9 +58,6 @@ const Login: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  if (user) {
-    return <div>Redirecting...</div>;
-  }
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Login</h1>

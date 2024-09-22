@@ -27,9 +27,17 @@ const mongoose_1 = __importStar(require("mongoose"));
 const TaskSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String },
-    status: { type: String, enum: ['To Do', 'In Progress', 'Completed'], default: 'To Do' },
-    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
+    status: {
+        type: String,
+        enum: ['To Do', 'In Progress', 'Completed'],
+        default: 'To Do'
+    },
+    priority: {
+        type: String,
+        enum: ['Low', 'Medium', 'High'],
+        default: 'Medium'
+    },
     dueDate: { type: Date },
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true }
-});
+}, { timestamps: true });
 exports.default = mongoose_1.default.model('Task', TaskSchema);
