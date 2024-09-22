@@ -1,9 +1,11 @@
+import Navbar from "@/components/Navbar";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div>
-      hi
+      <Navbar />
+      <h2>Welcome to the Task Management Dashboard</h2>
     </div>
   );
 }

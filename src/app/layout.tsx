@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -25,11 +27,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+
+<AuthProvider>
+          <TaskProvider>
+            <Navbar />
+            <main className="container mx-auto px-4 py-8">
+              {children}
+            </main>
+          </TaskProvider>
+        </AuthProvider>
       </body>
+      
     </html>
   );
 }
