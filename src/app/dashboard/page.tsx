@@ -590,6 +590,62 @@
 
 
 
+// 'use client';
+// import React, { useState, useEffect } from 'react';
+// import { useTaskContext } from '../context/TaskContext';
+// import TaskCard from '@/components/TaskCard';
+// import TaskForm from '@/components/TaskForm';
+// import { Task } from '@/app/types/types';
+
+// export default function DashboardPage() {
+//   const { tasks, loading, error, createTask } = useTaskContext();
+//   const [showForm, setShowForm] = useState(false);
+
+//   useEffect(() => {
+//     console.log('Tasks in DashboardPage:', tasks);
+//     console.log('Loading state:', loading);
+//     console.log('Error state:', error);
+//   }, [tasks, loading, error]);
+
+//   const handleCreateTask = async (newTask: Omit<Task, '_id' | 'userId'>) => {
+//     try {
+//       await createTask(newTask);
+//       console.log('Task created successfully');
+//       setShowForm(false);
+//     } catch (error) {
+//       console.error('Failed to create task:', error);
+//     }
+//   };
+
+//   if (loading) return <div>Loading tasks...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+//       <button 
+//         onClick={() => setShowForm(true)}
+//         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+//       >
+//         Add New Task
+//       </button>
+//       {showForm && (
+//         <TaskForm onClose={() => setShowForm(false)} onSubmit={handleCreateTask} />
+//       )}
+//       {Array.isArray(tasks) && tasks.length > 0 ? (
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+//           {tasks.map(task => (
+//             <TaskCard key={task._id} task={task} />
+//           ))}
+//         </div>
+//       ) : (
+//         <p>No tasks available. Create a new task to get started!</p>
+//       )}
+//     </div>
+//   );
+// }
+
+
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
@@ -609,6 +665,7 @@ export default function DashboardPage() {
 
   const handleCreateTask = async (newTask: Omit<Task, '_id' | 'userId'>) => {
     try {
+      console.log('Attempting to create task:', newTask);
       await createTask(newTask);
       console.log('Task created successfully');
       setShowForm(false);
