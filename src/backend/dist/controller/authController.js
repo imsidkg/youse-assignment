@@ -18,14 +18,26 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log('Signup request body:', req.body);
         const { username, email, password } = req.body;
-        const user = new User_1.default({ username, password });
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        const user = new User_1.default({ username, email, password });
         yield user.save();
         const token = jsonwebtoken_1.default.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
         res.status(201).json({ token });
     }
     catch (error) {
-        res.status(500).json({ message: "Error signing up", error });
+        console.error("Signup error:", error);
+        if (error.name === 'ValidationError') {
+            const validationErrors = Object.values(error.errors).map((err) => err.message);
+            return res.status(400).json({ message: "Validation error", errors: validationErrors });
+        }
+        if (error.code === 11000) {
+            return res.status(400).json({ message: "Username or email already exists" });
+        }
+        res.status(500).json({ message: "Error signing up", error: error.toString() });
     }
 });
 exports.signup = signup;

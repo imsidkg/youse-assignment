@@ -1,16 +1,11 @@
-'use client'
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+'use client';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
   username: string;
-}
-
-interface AuthResponse {
-  token: string;
-  user: User; // Assuming the user data is also returned
+  email: string;
 }
 
 interface AuthContextType {
@@ -18,59 +13,89 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const API_URL = 'http://localhost:5000/api';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Fetch user data or validate token
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('user');
+      }
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post<AuthResponse>('/api/auth/login', { email, password });
-      const { token, user: userData } = response.data; // TypeScript now knows about 'token'
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(userData); // Set user data
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
+
+      const data = await response.json();
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Login failed', error);
+      console.error('Login error:', error);
       throw error;
     }
   };
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post<AuthResponse>('/api/auth/signup', { username, email, password });
-      const { token, user: userData } = response.data; // TypeScript now knows about 'token'
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(userData); // Set user data
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Signup failed');
+      }
+
+      const data = await response.json();
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Signup failed', error);
+      console.error('Signup error:', error);
       throw error;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

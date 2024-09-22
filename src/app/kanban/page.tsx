@@ -3,11 +3,11 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTaskContext } from '../context/TaskContext';
 import TaskCard from '@/components/TaskCard';
-
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 const columns = ['To Do', 'In Progress', 'Completed'];
 
-export default function KanbanPage() {
+const KanbanPage: React.FC = () => {
   const { tasks, updateTask } = useTaskContext();
 
   const onDragEnd = (result: DropResult) => {
@@ -65,4 +65,6 @@ export default function KanbanPage() {
       </div>
     </DragDropContext>
   );
-}
+};
+
+export default ProtectedRoute(KanbanPage);

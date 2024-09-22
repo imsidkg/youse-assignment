@@ -13,13 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.MONGODB_URI);
-        console.log("Your mongoDB connectiooon was estab.");
+        const uri = process.env.MONGODB_URI;
+        if (!uri) {
+            throw new Error('MongoDB URI is not defined');
+        }
+        yield mongoose_1.default.connect(uri);
+        console.log('MongoDB connected successfully');
     }
     catch (error) {
-        console.log("Error connecting to mongoDB:", error);
+        console.error('Error connecting to mongoDB:', error);
         process.exit(1);
     }
 });

@@ -1,13 +1,13 @@
-"use client"
-
+'use client';
 import React, { useState } from 'react';
 import { useTaskContext } from '../context/TaskContext';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from '@/components/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import TaskList from '@/components/TaskList';
 import TaskForm from '@/components/TaskForm';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function DashboardPage() {
+const DashboardPage: React.FC = () => {
   const { tasks, loading, error } = useTaskContext();
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('dueDate');
@@ -30,35 +30,37 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
-      <div className="flex justify-between mb-4">
-        <Select onValueChange={(value) => setFilter(value)} defaultValue="all">
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="To Do">To Do</SelectItem>
-            <SelectItem value="In Progress">In Progress</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
-          </SelectContent>
-        </Select>
+    <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+    <div className="flex justify-between mb-4">
+      <Select onValueChange={(value) => setFilter(value)} defaultValue="all">
+        <SelectTrigger>
+          <SelectValue placeholder="Filter by status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          <SelectItem value="To Do">To Do</SelectItem>
+          <SelectItem value="In Progress">In Progress</SelectItem>
+          <SelectItem value="Completed">Completed</SelectItem>
+        </SelectContent>
+      </Select>
 
-        <Select onValueChange={(value) => setSortBy(value)} defaultValue="dueDate">
-          <SelectTrigger>
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="dueDate">Due Date</SelectItem>
-            <SelectItem value="priority">Priority</SelectItem>
-            <SelectItem value="title">Title</SelectItem>
-          </SelectContent>
-        </Select>
+      <Select onValueChange={(value) => setSortBy(value)} defaultValue="dueDate">
+        <SelectTrigger>
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="dueDate">Due Date</SelectItem>
+          <SelectItem value="priority">Priority</SelectItem>
+          <SelectItem value="title">Title</SelectItem>
+        </SelectContent>
+      </Select>
 
-        <Button onClick={() => setShowForm(true)}>Add Task</Button>
-      </div>
-      <TaskList tasks={sortedTasks} />
-      {showForm && <TaskForm onClose={() => setShowForm(false)} />}
+      <Button onClick={() => setShowForm(true)}>Add Task</Button>
     </div>
+    <TaskList tasks={sortedTasks} />
+    {showForm && <TaskForm onClose={() => setShowForm(false)} />}
+  </div>
   );
-}
+};
+
+export default ProtectedRoute(DashboardPage);
