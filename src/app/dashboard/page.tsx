@@ -442,6 +442,56 @@
 // }
 
 
+// 'use client';
+// import React, { useState, useEffect } from 'react';
+// import { useTaskContext } from '../context/TaskContext';
+// import TaskCard from '@/components/TaskCard';
+// import TaskForm from '@/components/TaskForm';
+
+// export default function DashboardPage() {
+//   const { tasks, loading, error, createTask, updateTask, deleteTask } = useTaskContext();
+//   const [showForm, setShowForm] = useState(false);
+
+//   useEffect(() => {
+//     console.log('Tasks in DashboardPage:', tasks);
+//     console.log('Loading state:', loading);
+//     console.log('Error state:', error);
+//   }, [tasks, loading, error]);
+
+//   if (loading) return <div>Loading tasks...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+//       <button 
+//         onClick={() => setShowForm(true)}
+//         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+//       >
+//         Add New Task
+//       </button>
+//       {showForm && (
+//         <TaskForm 
+//           onClose={() => setShowForm(false)}
+//         />
+//       )}
+//       {!tasks || tasks.length === 0 ? (
+//         <p>No tasks available. Create a new task to get started!</p>
+//       ) : (
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+//           {tasks.map(task => (
+//             <TaskCard
+//               key={task._id} 
+//               task={task} 
+//             />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
@@ -475,9 +525,7 @@ export default function DashboardPage() {
           onClose={() => setShowForm(false)}
         />
       )}
-      {!tasks || tasks.length === 0 ? (
-        <p>No tasks available. Create a new task to get started!</p>
-      ) : (
+      {Array.isArray(tasks) && tasks.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tasks.map(task => (
             <TaskCard
@@ -486,6 +534,8 @@ export default function DashboardPage() {
             />
           ))}
         </div>
+      ) : (
+        <p>No tasks available. Create a new task to get started!</p>
       )}
     </div>
   );
