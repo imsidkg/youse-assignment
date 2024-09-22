@@ -1,10 +1,16 @@
+'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
   username: string;
+}
+
+interface AuthResponse {
+  token: string;
+  user: User; // Assuming the user data is also returned
 }
 
 interface AuthContextType {
@@ -30,11 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      const { token } = response.data;
+      const response = await axios.post<AuthResponse>('/api/auth/login', { email, password });
+      const { token, user: userData } = response.data; // TypeScript now knows about 'token'
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Set user data
+      setUser(userData); // Set user data
       router.push('/dashboard');
     } catch (error) {
       console.error('Login failed', error);
@@ -44,11 +50,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/signup', { username, email, password });
-      const { token } = response.data;
+      const response = await axios.post<AuthResponse>('/api/auth/signup', { username, email, password });
+      const { token, user: userData } = response.data; // TypeScript now knows about 'token'
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Set user data
+      setUser(userData); // Set user data
       router.push('/dashboard');
     } catch (error) {
       console.error('Signup failed', error);

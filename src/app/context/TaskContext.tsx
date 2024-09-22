@@ -1,13 +1,11 @@
+'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { Task } from '../types/types';
 
-interface Task {
-  _id: string;
-  title: string;
-  description?: string;
-  status: 'To Do' | 'In Progress' | 'Completed';
-  priority: 'Low' | 'Medium' | 'High';
-  dueDate?: Date;
+
+interface TaskResponse {
+  tasks: Task[];
 }
 
 interface TaskContextType {
@@ -30,8 +28,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/tasks');
-      setTasks(response.data);
+      const response = await axios.get<TaskResponse>('/api/tasks'); // Specify TaskResponse type
+      setTasks(response.data.tasks); // Assuming the response has a 'tasks' field
       setError(null);
     } catch (err) {
       setError('Failed to fetch tasks');
@@ -42,8 +40,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createTask = async (task: Omit<Task, '_id'>) => {
     try {
-      const response = await axios.post('/api/tasks', task);
-      setTasks([...tasks, response.data]);
+      const response = await axios.post<Task>('/api/tasks', task); // Specify Task type
+      setTasks([...tasks, response.data]); // response.data is of type Task
     } catch (err) {
       setError('Failed to create task');
     }
@@ -51,8 +49,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateTask = async (id: string, updatedTask: Partial<Task>) => {
     try {
-      const response = await axios.put(`/api/tasks/${id}`, updatedTask);
-      setTasks(tasks.map(task => task._id === id ? response.data : task));
+      const response = await axios.put<Task>(`/api/tasks/${id}`, updatedTask); // Specify Task type
+      setTasks(tasks.map(task => task._id === id ? response.data : task)); // response.data is of type Task
     } catch (err) {
       setError('Failed to update task');
     }

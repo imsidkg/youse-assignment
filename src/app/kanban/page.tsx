@@ -1,7 +1,8 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { useTaskContext } from '../../context/TaskContext';
-import TaskCard from '../../components/TaskCard';
+import { useTaskContext } from '../context/TaskContext';
+import TaskCard from '@/components/TaskCard';
+
 
 const columns = ['To Do', 'In Progress', 'Completed'];
 

@@ -15,7 +15,7 @@ interface Task {
   description?: string;
   status: 'To Do' | 'In Progress' | 'Completed';
   priority: 'Low' | 'Medium' | 'High';
-  dueDate?: Date;
+  dueDate?: string; // Change to string for API compatibility
 }
 
 const taskSchema = z.object({
@@ -23,7 +23,7 @@ const taskSchema = z.object({
   description: z.string().optional(),
   status: z.enum(['To Do', 'In Progress', 'Completed']),
   priority: z.enum(['Low', 'Medium', 'High']),
-  dueDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  dueDate: z.string().optional().transform(val => val ? new Date(val).toISOString() : undefined),
 });
 
 type TaskFormValues = z.infer<typeof taskSchema>;
@@ -42,15 +42,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ onClose, initialData }) => {
     defaultValues: initialData
       ? {
           ...initialData,
-          // Convert dueDate back to a Date object
-          dueDate: initialData.dueDate ? new Date(initialData.dueDate) : undefined,
+          dueDate: initialData.dueDate || '', // Ensure it's a string
         }
       : {
           title: '',
           description: '',
           status: 'To Do',
           priority: 'Medium',
-          dueDate: undefined,
+          dueDate: '',
         },
   });
 
@@ -58,9 +57,15 @@ const TaskForm: React.FC<TaskFormProps> = ({ onClose, initialData }) => {
     setLoading(true);
     try {
       if (initialData) {
-        await updateTask(initialData._id, data);
+        await updateTask(initialData._id, {
+          ...data,
+          dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
+        });
       } else {
-        await createTask(data);
+        await createTask({
+          ...data,
+          dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
+        });
       }
       onClose();
     } catch (error) {

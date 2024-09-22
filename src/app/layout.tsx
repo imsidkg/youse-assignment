@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
+import { TaskProvider } from "./context/TaskContext";
+import Navbar from "@/components/Navbar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

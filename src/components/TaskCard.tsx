@@ -1,4 +1,10 @@
+'use client'
+import { useTaskContext } from '@/app/context/TaskContext';
+import { Task } from '@/app/types/types';
 import React from 'react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 
 interface TaskCardProps {
