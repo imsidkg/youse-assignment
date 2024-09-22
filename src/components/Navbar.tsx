@@ -1,13 +1,14 @@
-'use client'
+'use client';
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Button } from './ui/button';
 import { useAuth } from '@/app/context/AuthContext';
 
-
 const Navbar: React.FC = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuth();
 
   return (
@@ -21,39 +22,43 @@ const Navbar: React.FC = () => {
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                href="/dashboard"
-                className={`${
-                  router.pathname === '/dashboard'
-                    ? 'border-indigo-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/kanban"
-                className={`${
-                  router.pathname === '/kanban'
-                    ? 'border-indigo-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-              >
-                Kanban Board
-              </Link>
+              {user && (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className={`${
+                      pathname === '/dashboard'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/kanban"
+                    className={`${
+                      pathname === '/kanban'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                  >
+                    Kanban Board
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">Welcome, {user.username}</span>
-                <Button variant="ghost" onClick={logout}>
+                <Button variant="ghost" className='text-black' onClick={logout}>
                   Logout
                 </Button>
               </div>
             ) : (
               <div className="space-x-2">
-                <Button variant="ghost" onClick={() => router.push('/login')}>
+                <Button variant="ghost" className='text-black' onClick={() => router.push('/login')}>
                   Login
                 </Button>
                 <Button onClick={() => router.push('/signup')}>Sign Up</Button>

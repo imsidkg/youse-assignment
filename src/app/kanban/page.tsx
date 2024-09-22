@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTaskContext } from '../context/TaskContext';
