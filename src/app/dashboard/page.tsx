@@ -348,14 +348,41 @@
 
 
 
+// 'use client';
+// import { useTaskContext } from '../context/TaskContext';
+
+// export default function DashboardPage() {
+//   const { tasks, loading, error } = useTaskContext();
+
+//   if (loading) return <div>Loading...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   return (
+//     <div>
+//       <h1>Dashboard</h1>
+//       {tasks.map(task => (
+//         <div key={task._id}>{task.title}</div>
+//       ))}
+//     </div>
+//   );
+// }
+
 'use client';
+import React from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
-export default function DashboardPage() {
+const DashboardPage: React.FC = () => {
   const { tasks, loading, error } = useTaskContext();
+
+  console.log('Tasks in DashboardPage:', tasks); // Add this line for debugging
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
+  // Check if tasks is an array and has items
+  if (!Array.isArray(tasks) || tasks.length === 0) {
+    return <div>No tasks available</div>;
+  }
 
   return (
     <div>
@@ -365,4 +392,6 @@ export default function DashboardPage() {
       ))}
     </div>
   );
-}
+};
+
+export default DashboardPage;
