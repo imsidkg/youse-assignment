@@ -20,7 +20,7 @@ export const signup = async (req: Request, res: Response) => {
       { expiresIn: "1d" }
     );
     res.status(201).json({ token });
-  } catch (error) {
+  } catch (error:any) {
     console.error("Signup error:", error);
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map((err: any) => err.message);
