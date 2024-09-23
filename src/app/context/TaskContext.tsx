@@ -114,7 +114,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchTasks();
-    const refreshTasks = setInterval(() => {
+    const refreshTasks = setTimeout(() => {
       fetchTasks(); 
     }, 3000);
   
