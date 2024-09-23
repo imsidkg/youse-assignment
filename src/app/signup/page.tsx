@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 interface SignupResponse {
@@ -10,6 +11,7 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +35,7 @@ const Signup: React.FC = () => {
       const data: SignupResponse = await response.json();
       localStorage.setItem('token', data.token);
       console.log('Signed up successfully', data.token);
+      router.push('/login')
     } catch (err: any) {
       console.error('Signup error:', err);
       setError(err.message || 'An error occurred');
