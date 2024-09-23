@@ -114,9 +114,12 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchTasks();
-    setTimeout(() =>{
-      router.refresh();
-    },3000)
+    const refreshTasks = setInterval(() => {
+      fetchTasks(); 
+    }, 3000);
+  
+   
+    return () => clearInterval(refreshTasks);
   }, []);
 
   useEffect(() => {
