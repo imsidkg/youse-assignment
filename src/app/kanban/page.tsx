@@ -78,7 +78,7 @@ const KanbanPage: React.FC = () => {
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 p-4">
         {columns.map((column) => (
           <div key={column.id} className="flex-1 bg-gray-200 p-4 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">{column.title}</h2>
+            <h2 className="text-xl font-bold mb-4 text-black">{column.title}</h2>
             <Droppable droppableId={column.id} key={column.id}>
               {(provided) => (
                 <div
