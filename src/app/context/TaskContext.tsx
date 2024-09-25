@@ -51,6 +51,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Fetched tasks:', response.data);
       setTimeout(()=> {
         router.refresh();
+        console.log('refresh from try')
       },3000)
       router.refresh();
       setTasks(Array.isArray(response.data) ? response.data : []);
@@ -59,6 +60,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError('Failed to fetch tasks, please refresh');
       setTimeout(()=> {
         router.refresh();
+        console.log('refresh from catch')
       },3000)
    
       setTasks([]);
