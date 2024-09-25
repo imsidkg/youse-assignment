@@ -130,7 +130,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, 3000);
   
    
-    return () => clearInterval(refreshTasks);
+
   }, []);
 
   useEffect(() => {
