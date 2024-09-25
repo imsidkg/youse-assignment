@@ -126,14 +126,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    fetchTasks();
-    const refreshTasks = setTimeout(() => {
-      fetchTasks(); 
-    }, 3000);
+    const fetchTasksAndRefresh = async () => {
+      await fetchTasks();
+      router.refresh();  
+    };
   
-   
-
-  }, []);
+    fetchTasksAndRefresh();
+  }, []);  
+  
 
   useEffect(() => {
     console.log('Tasks in context:', tasks);
