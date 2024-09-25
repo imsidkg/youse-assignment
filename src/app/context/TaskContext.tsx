@@ -49,14 +49,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Fetching tasks from:', `${API_URL}/tasks`);
       const response = await axios.get<Task[]>(`${API_URL}/tasks`, getAuthHeaders());
       console.log('Fetched tasks:', response.data);
-      setTasks(Array.isArray(response.data) ? response.data : []);
       setTimeout(()=> {
         router.refresh();
       },3000)
       router.refresh();
+      setTasks(Array.isArray(response.data) ? response.data : []);
     } catch (err: unknown) {
       console.error('Error fetching tasks:', err);
-      setError('Failed to fetch tasks');
+      setError('Failed to fetch tasks, please refresh');
       setTimeout(()=> {
         router.refresh();
       },3000)
